@@ -1,0 +1,17 @@
+name: Добавить сайт
+description: Сайт работает на сертификате Минцифры, но его нет в списке
+labels: [site]
+body:
+  - type: input
+    id: domain
+    attributes:
+      label: Домен
+      description: Адрес, который не открывается, без https:// и пути.
+      placeholder: "online.example.ru"
+    validations:
+      required: true
+  - type: textarea
+    id: about
+    attributes:
+      label: Что это за сайт
+      description: Необязательно. Помогает отнести сайт к нужной группе в списке.

@@ -1,0 +1,13 @@
+# type(scope): imperative summary, at most 72 characters, no period
+#
+# Why the change was needed and what was wrong before. The diff
+# already shows what changed. Wrap at 72 characters.
+#
+# Fixes #N
+# BREAKING CHANGE: what breaks and how to migrate
+# Co-Authored-By: Name <email>
+#
+# Types:  feat fix refactor perf test docs ci build chore
+# Scopes: proxy localca russianca pins pinbot probe update sysproxy
+#         rootstore trust serve cli install catalog snapshot readme docs
+#         ci build

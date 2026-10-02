@@ -1,0 +1,111 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      # The tag message becomes the intro; checkout may leave a lightweight copy.
+      - run: git fetch --force --tags origin
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Embed the latest signed pin set
+        run: |
+          if git ls-remote --exit-code --heads origin pins > /dev/null; then
+            git fetch origin pins
+            list=pins.v2.json
+            git cat-file -e FETCH_HEAD:$list 2>/dev/null || list=pins.json
+            git show FETCH_HEAD:$list > internal/snapshot/data/pins.json
+            git show FETCH_HEAD:$list.sig > internal/snapshot/data/pins.json.sig
+            echo "PINS_COMMIT=$(git rev-parse FETCH_HEAD)" >> "$GITHUB_ENV"
+            echo "PINS_FILE=$list" >> "$GITHUB_ENV"
+          fi
+          go run ./cmd/pinbot verify -dir internal/snapshot/data
+
+      - run: go test ./...
+
+      - name: Build
+        env:
+          GOOS: windows
+          VERSION: ${{ github.ref_name }}
+        run: |
+          for arch in amd64 arm64; do
+            GOARCH=$arch go build -trimpath -buildvcs=true -ldflags "-s -w -H=windowsgui -X main.version=${VERSION}" -o "dist/bin/${arch}/no-mintsifra.exe" ./cmd/no-mintsifra
+          done
+          (cd dist/bin && sha256sum */no-mintsifra.exe) > dist/unsigned.sha256
+
+      # Signing runs once the project is set up with SignPath (variable
+      # SIGNPATH_ORGANIZATION_ID, secret SIGNPATH_API_TOKEN). Until then the
+      # executables ship unsigned and are checked by their hash alone.
+      - name: Upload executables for signing
+        id: unsigned
+        if: vars.SIGNPATH_ORGANIZATION_ID != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: unsigned
+          path: dist/bin
+
+      - name: Sign executables
+        if: vars.SIGNPATH_ORGANIZATION_ID != ''
+        uses: signpath/github-action-submit-signing-request@f6d04783b4569d051e0c80105fe66e82819d0092 # v3.0
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: no-mintsifra
+          signing-policy-slug: release-signing
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: dist/bin
+
+      - name: Package
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          for arch in amd64 arm64; do
+            dir="dist/no-mintsifra-${VERSION}-windows-${arch}"
+            mkdir -p "$dir"
+            cp "dist/bin/${arch}/no-mintsifra.exe" LICENSE "$dir/"
+            cp packaging/README.txt "$dir/README.txt"
+            (cd dist && zip -qr "no-mintsifra-${VERSION}-windows-${arch}.zip" "no-mintsifra-${VERSION}-windows-${arch}")
+          done
+          (cd dist && sha256sum *.zip > SHA256SUMS.txt)
+
+      # What a rebuild needs to produce the same bytes; see the README.
+      - name: Record the build inputs
+        run: |
+          {
+            echo "### Сборка"
+            echo
+            echo "- Go: \`$(go env GOVERSION)\`"
+            echo "- Список сайтов: \`${PINS_FILE:-встроенный}\` из ветки pins, коммит \`${PINS_COMMIT:-нет}\`"
+            echo "- SHA-256 исполняемых файлов до подписи:"
+            sed 's/^/  - /' dist/unsigned.sha256
+          } > dist/build.md
+
+      # GitHub stores attestations only for public repositories. Once public,
+      # a release without one must not be published.
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        if: github.event.repository.visibility == 'public'
+        with:
+          subject-path: dist/*.zip
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          { bash .github/release-notes.sh "${{ github.ref_name }}"; cat dist/build.md; } > dist/notes.md
+          gh release create "${{ github.ref_name }}" dist/*.zip dist/SHA256SUMS.txt \
+            --title "${{ github.ref_name }}" --notes-file dist/notes.md

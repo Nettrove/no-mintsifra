@@ -1,0 +1,38 @@
+# Domains that may serve certificates from the Russian Trusted CA.
+#
+# `domains` are enumerated for subdomains automatically, but only once the
+# apex or www is actually seen on the Russian Trusted CA; `hosts` are probed
+# as written. Entries that turn out to use ordinary certificates produce no
+# pins, so listing a domain early is harmless.
+- name: Сбербанк
+  domains: [sberbank.ru, sberbank.com, sber.ru, sbrf.ru, sberbank-ast.ru, sberbankins.ru, sberstrah.ru, sberpay.ru, sberid.ru, sberdevices.ru, sbercloud.ru, sberhealth.ru, sbermarket.ru, kuper.ru, sbermegamarket.ru, megamarket.ru, domclick.ru, sberauto.com, sberlogistics.ru, sberunity.ru, sberzvuk.com, sberhub.ru]
+- name: ВТБ
+  domains: [vtb.ru, vtb.com, vtb-leasing.ru, vtbcapital.ru, vtb-factoring.ru, vtbconnect.ru]
+- name: Т-Банк
+  domains: [tbank.ru, tinkoff.ru, tinkoffinsurance.ru, tinkoffjournal.ru, tinkoff.com, t-j.ru]
+- name: Альфа-Банк
+  domains: [alfabank.ru, alfabank.com, alfastrah.ru, alfaleasing.ru, alfadirect.ru, alfacapital.ru, alfa.ru]
+- name: Газпромбанк
+  domains: [gazprombank.ru, gpb.ru, gazprombank.tech]
+- name: Другие банки
+  domains: [mkb.ru, psbank.ru, sovcombank.ru, halvacard.ru, rshb.ru, rosbank.ru, unicreditbank.ru, otpbank.ru, pochtabank.ru, uralsib.ru, akbars.ru, domrfbank.ru, dom.rf, mtsbank.ru, wbbank.ru, tochka.com, modulbank.ru, bspb.ru, avangard.ru, expobank.ru, ubrr.ru, rgsbank.ru, raiffeisen.ru, rncb.ru, bm.ru, mbank.ru, banki.ru, sravni.ru, yoomoney.ru, qiwi.com, cbr.ru, nspk.ru, mironline.ru, sbp.nspk.ru, nsd.ru, moex.com, spbexchange.ru]
+- name: Страхование
+  domains: [sogaz.ru, renins.ru, ingos.ru, rgs.ru, vsk.ru, soglasie.ru, maxinsurance.ru, ugsk.ru, energogarant.ru, reso.ru, zettains.ru, kaskad.ru]
+- name: Брокеры и инвестиции
+  domains: [finam.ru, bcs.ru, bcs-broker.ru, open-broker.ru, psbinvest.ru, atonline.ru, solid-broker.ru, vtb-invest.ru, tinkoffinvest.ru]
+- name: Госуслуги и ведомства
+  domains: [gosuslugi.ru, nalog.gov.ru, nalog.ru, fns.gov.ru, sfr.gov.ru, pfr.gov.ru, mos.ru, government.ru, kremlin.ru, duma.gov.ru, council.gov.ru, minfin.gov.ru, economy.gov.ru, digital.gov.ru, mil.ru, mvd.ru, fssp.gov.ru, rosreestr.gov.ru, rosreestr.ru, customs.gov.ru, zakupki.gov.ru, torgi.gov.ru, rkn.gov.ru, genproc.gov.ru, sudrf.ru, gibdd.ru, mchs.gov.ru, minzdrav.gov.ru, edu.gov.ru, minobrnauki.gov.ru, fas.gov.ru, rospotrebnadzor.ru, gov.ru, roskazna.gov.ru, budget.gov.ru, gosuslugi.moscow, pochta.ru, russianpost.ru, fedresurs.ru, egrul.nalog.ru, rusprofile.ru, kad.arbitr.ru, notariat.ru, fedstat.ru, rosstat.gov.ru, ach.gov.ru]
+- name: Связь
+  domains: [mts.ru, beeline.ru, megafon.ru, tele2.ru, rostelecom.ru, rt.ru, yota.ru, dom.ru, ttk.ru, mgts.ru, motivtelecom.ru, sbermobile.ru, lifecell.ru, rtk-solar.ru, itglobal.com]
+- name: Маркетплейсы и ритейл
+  domains: [ozon.ru, wildberries.ru, wb.ru, avito.ru, lamoda.ru, mvideo.ru, eldorado.ru, dns-shop.ru, citilink.ru, petrovich.ru, leroymerlin.ru, castorama.ru, obi.ru, magnit.ru, x5.ru, 5ka.ru, perekrestok.ru, vkusvill.ru, lenta.com, auchan.ru, okeydostavka.ru, dixy.ru, detmir.ru, sportmaster.ru, sima-land.ru, kari.com, ikea.com, aliexpress.ru, yandex.market, samokat.ru, delivery-club.ru, eda.yandex.ru, goods.ru, holodilnik.ru, technopark.ru, ulmart.ru]
+- name: Транспорт и путешествия
+  domains: [rzd.ru, aeroflot.ru, s7.ru, pobeda.aero, utair.ru, nordwind.ru, rossiya-airlines.com, tutu.ru, aviasales.ru, ostrovok.ru, sutochno.ru, avtodor-tr.ru, kupibilet.ru, onetwotrip.com, tripster.ru, ufs-online.ru, mosgortrans.ru, mostransavto.ru, taximaxim.ru, citimobil.ru, dyakov.net]
+- name: Медиа и онлайн-сервисы
+  domains: [vk.com, vk.ru, ok.ru, mail.ru, rambler.ru, rutube.ru, kinopoisk.ru, ivi.ru, okko.tv, wink.ru, kion.ru, premier.one, smotrim.ru, 1tv.ru, vgtrk.ru, ria.ru, tass.ru, rbc.ru, kommersant.ru, rg.ru, lenta.ru, gazeta.ru, iz.ru, kp.ru, mk.ru, aif.ru, fontanka.ru, rt.com, ren.tv, ntv.ru, vedomosti.ru, interfax.ru, yandex.ru, ya.ru, dzen.ru, 2gis.ru, hh.ru, superjob.ru, habr.com, vc.ru, pikabu.ru, drive2.ru, auto.ru, drom.ru, cian.ru, domofond.ru, youla.ru, zvuk.com, music.yandex.ru, boom.ru, litres.ru, mts-live.ru]
+- name: Энергетика и ЖКХ
+  domains: [gazprom.ru, rosneft.ru, lukoil.ru, rosseti.ru, rosatom.ru, mosenergosbyt.ru, mosvodokanal.ru, mosoblgaz.ru, eias.ru, gisgmp.ru, gis-zhkh.ru, dom.gosuslugi.ru, tatneft.ru, surgutneftegas.ru, novatek.ru]
+- name: Образование и медицина
+  domains: [msu.ru, hse.ru, spbu.ru, mipt.ru, sechenov.ru, urfu.ru, invitro.ru, helix.ru, gemotest.ru, medsi.ru, smclinic.ru, sberhealth.ru, docdoc.ru, prodoctorov.ru, emias.info, edu.ru, uchi.ru, skyeng.ru, netology.ru, geekbrains.ru]
+- name: Платежи и сервисы
+  domains: [cloudpayments.ru, tinkoff-acquiring.ru, robokassa.ru, yookassa.ru, payture.com, tkbbank.ru, platon.ru, alfa-bank.pro, sbp.ru, payanyway.ru, qiwi.ru, webmoney.ru, paymaster.ru, kassa.ru, atol.ru, ofd.ru, kontur.ru, skbkontur.ru, 1c.ru, 1cbit.ru, diadoc.ru]

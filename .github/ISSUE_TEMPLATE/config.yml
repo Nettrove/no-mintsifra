@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Уязвимость
+    url: https://github.com/Nettrove/no-mintsifra/security/advisories/new
+    about: Сообщайте приватно, не в Issues.

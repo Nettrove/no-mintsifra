@@ -1,0 +1,71 @@
+name: pins
+
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  push:
+    branches: [main]
+    paths: ["catalog/**", "cmd/pinbot/**", "internal/pins/**", "internal/probe/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pins
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    # The signing key lives in this environment, which only main may use.
+    environment: pins
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Fetch previous snapshot
+        run: |
+          if git ls-remote --exit-code --heads origin pins > /dev/null; then
+            git fetch origin pins
+            git worktree add --detach prev FETCH_HEAD
+          fi
+
+      # Chains seen from inside Russia. They are verified again by the bot,
+      # so the probe is not trusted; without them the run goes on as before.
+      - name: Fetch observations from the Russian probe
+        if: vars.PROBE_OBSERVATIONS_URL != ''
+        env:
+          URL: ${{ vars.PROBE_OBSERVATIONS_URL }}
+        run: |
+          curl -fsSL --max-time 120 --max-filesize 67108864 -o obs.json "$URL" ||
+            { rm -f obs.json; echo "::warning::probe observations unavailable"; }
+
+      - name: Probe sites and sign
+        env:
+          PINS_SIGNING_KEY: ${{ secrets.PINS_SIGNING_KEY }}
+        run: |
+          prev=""
+          [ -d prev ] && prev="-prev prev"
+          obs=""
+          [ -s obs.json ] && obs="-observations obs.json"
+          go run ./cmd/pinbot build -catalog catalog/sites.yaml -out out $prev $obs
+          go run ./cmd/pinbot verify -dir out
+
+      - name: Publish to the pins branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin pins > /dev/null; then
+            git worktree add publish -B pins FETCH_HEAD
+          else
+            git worktree add --detach publish
+            (cd publish && git switch --orphan pins && git rm -rfq . 2>/dev/null || true)
+          fi
+          cp out/pins.json out/pins.json.sig out/pins.v2.json out/pins.v2.json.sig publish/
+          cd publish
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -m "pins: refresh $(date -u +%F)"
+          git push origin pins

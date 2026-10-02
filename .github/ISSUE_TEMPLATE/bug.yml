@@ -1,0 +1,26 @@
+name: Ошибка
+description: Сайт не открывается или программа работает не так, как описано
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Что произошло
+      description: Какой сайт, в каком браузере, что вы видите вместо сайта.
+      placeholder: "online.example.ru в Brave показывает ERR_CERT_AUTHORITY_INVALID"
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Отчёт проверки
+      description: Нажмите Win+R и выполните "%LocalAppData%\no-mintsifra\no-mintsifra.exe" doctor --report. Отчёт сохранится в «Документы» как no-mintsifra-report.txt; вставьте сюда его текст. Содержимое трафика в отчёт не попадает, имя пользователя заменено.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: vpn
+    attributes:
+      label: VPN или прокси
+      description: Если включён VPN-клиент или прокси, укажите какой и в каком режиме.
+      placeholder: "v2rayN, системный прокси"

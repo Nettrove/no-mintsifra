@@ -1,0 +1,9 @@
+/dist/
+/keys/
+*.exe
+*.test
+*.out
+.env
+.claude/
+.idea/
+.vscode/
