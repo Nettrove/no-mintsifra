@@ -36,8 +36,11 @@ try {
     } elseif ($requireSignature -or $sig.Status -ne 'NotSigned') {
         throw "Подпись файла недействительна ($($sig.Status)), установка остановлена."
     }
-    # The executable is windowless and opens its own console; wait for it to finish.
-    Start-Process $exe.FullName -ArgumentList 'install', '-y' -Wait
+    # The executable is windowless and opens its own console; wait for it to
+    # finish. Start-Process -Wait would also wait for the proxy it leaves
+    # running, so the wait is on this one process only.
+    $p = Start-Process $exe.FullName -ArgumentList 'install', '-y' -PassThru
+    $p.WaitForExit()
 }
 finally {
     Remove-Item $work -Recurse -Force -ErrorAction SilentlyContinue
